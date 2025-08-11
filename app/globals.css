@@ -120,3 +120,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.ag-theme-quartz .ag-cell.cell-error {
+  animation: none;
+}

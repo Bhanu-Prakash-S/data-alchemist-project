@@ -7,7 +7,7 @@ import { parseExcel } from "@/lib/parseFile";
 import { useAppStore } from "@/store/useAppStore";
 
 export default function FileDropper() {
-  const { setData, loadFromLocalStorage } = useAppStore();
+  const { setData, loadFromLocalStorage, runAllValidators } = useAppStore();
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -18,8 +18,11 @@ export default function FileDropper() {
         setData(entity as any, data);
       });
       loadFromLocalStorage();
+
+      // run validators
+      setTimeout(() => runAllValidators(), 200);
     },
-    [setData, loadFromLocalStorage]
+    [setData, loadFromLocalStorage, runAllValidators]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
