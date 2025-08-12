@@ -6,14 +6,8 @@ import { useAppStore } from "../store/useAppStore";
 import type { EntityType } from "@/lib/validationEngine";
 
 export default function Sidebar() {
-  const {
-    activeEntity,
-    setActiveEntity,
-    activeView,
-    setActiveView,
-    toggleValidationPanel,
-    validationIssues,
-  } = useAppStore();
+  const { activeView, setActiveView, toggleValidationPanel, validationIssues } =
+    useAppStore();
   const menuItems: {
     name: EntityType | "Validation Issues" | "Business Rules";
     badge?: number;
@@ -38,12 +32,12 @@ export default function Sidebar() {
               toggleValidationPanel(true);
               return;
             }
-            if (item.name === "Business Rules") {
-              setActiveView(item.name);
-              return;
-            }
+            // if (item.name === "Business Rules") {
+            //   setActiveView(item.name);
+            //   return;
+            // }
             // For entity grids:
-            setActiveEntity(item.name as EntityType);
+            // setActiveEntity(item.name as EntityType);
             setActiveView(item.name);
           }}
         >

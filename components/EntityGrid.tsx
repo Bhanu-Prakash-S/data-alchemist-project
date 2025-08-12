@@ -23,9 +23,12 @@ function useDebouncedStoreUpdater(setData: any, runAllValidators: any) {
   );
 }
 
-export default function EntityGrid() {
+export default function EntityGrid({
+  entity,
+}: {
+  entity: "Clients" | "Workers" | "Tasks";
+}) {
   const {
-    activeEntity,
     clients,
     workers,
     tasks,
@@ -35,16 +38,12 @@ export default function EntityGrid() {
   } = useAppStore();
 
   const rowData =
-    activeEntity === "Clients"
-      ? clients
-      : activeEntity === "Workers"
-      ? workers
-      : tasks;
+    entity === "Clients" ? clients : entity === "Workers" ? workers : tasks;
 
   const gridApiRef = useRef<any>(null);
 
-  const validationLookup = useValidationLookup(validationIssues, activeEntity);
-  const columnDefs = useColumnDefs(rowData, validationLookup, activeEntity);
+  const validationLookup = useValidationLookup(validationIssues, entity);
+  const columnDefs = useColumnDefs(rowData, validationLookup, entity);
   const updateStoreDebounced = useDebouncedStoreUpdater(
     setData,
     runAllValidators
@@ -56,17 +55,17 @@ export default function EntityGrid() {
       params.api.forEachNode((node) => {
         if (node.data) allData.push(node.data);
       });
-      updateStoreDebounced(activeEntity, allData);
+      updateStoreDebounced(entity, allData);
     },
-    [activeEntity, updateStoreDebounced]
+    [entity, updateStoreDebounced]
   );
 
   const onGridReady = useCallback(
     (params: GridReadyEvent) => {
       gridApiRef.current = params.api;
-      navigateToIssue(activeEntity, rowData, params.api);
+      navigateToIssue(entity, rowData, params.api);
     },
-    [activeEntity, rowData]
+    [entity, rowData]
   );
 
   if (!rowData || !rowData.length) return null;

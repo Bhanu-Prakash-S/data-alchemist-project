@@ -2,19 +2,22 @@
 import { create } from "zustand";
 import { runAllValidators, ValidationIssue } from "@/lib/validationEngine";
 import { EntityType } from "@/lib/validationEngine";
-export type AppView = EntityType | "Validation Issues" | "Business Rules";
+export type AppView =
+  | "Clients"
+  | "Workers"
+  | "Tasks"
+  | "Validation Issues"
+  | "Business Rules";
 
 interface AppState {
   activeView: AppView;
   setActiveView: (view: AppView) => void;
-  activeEntity: EntityType;
   clients: any[];
   workers: any[];
   tasks: any[];
   validationIssues: ValidationIssue[];
   validationPanelOpen: boolean;
 
-  setActiveEntity: (e: EntityType) => void;
   setData: (entity: EntityType, rows: any[]) => void;
   loadFromLocalStorage: () => void;
   runAllValidators: () => void;
@@ -26,14 +29,12 @@ interface AppState {
 export const useAppStore = create<AppState>((set, get) => ({
   activeView: "Clients",
   setActiveView: (view) => set({ activeView: view }),
-  activeEntity: "Clients",
   clients: [],
   workers: [],
   tasks: [],
   validationIssues: [],
   validationPanelOpen: false,
 
-  setActiveEntity: (entity) => set({ activeEntity: entity }),
   setData: (entity, rows) => {
     // set and persist
     const key = entity;

@@ -16,7 +16,7 @@ export default function ValidationPanel() {
   ) as ValidationIssue[];
   const runAllValidators = useAppStore((state) => state.runAllValidators);
   const applyQuickFix = useAppStore((state) => state.applyQuickFix);
-  const setActiveEntity = useAppStore((state) => state.setActiveEntity);
+  const setActiveView = useAppStore((state) => state.setActiveView);
 
   // Group by entity
   const byEntity: Record<EntityType, ValidationIssue[]> =
@@ -33,7 +33,7 @@ export default function ValidationPanel() {
 
   // Navigate to issue
   const onClickIssue = (issue: ValidationIssue) => {
-    setActiveEntity(issue.entity as EntityType);
+    setActiveView(issue.entity as EntityType);
     setTimeout(() => {
       const fn = (window as any).__dataAlch_navigateToIssue;
       if (typeof fn === "function") fn(issue);
