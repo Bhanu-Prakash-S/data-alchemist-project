@@ -2,8 +2,11 @@
 import { create } from "zustand";
 import { runAllValidators, ValidationIssue } from "@/lib/validationEngine";
 import { EntityType } from "@/lib/validationEngine";
+export type AppView = EntityType | "Validation Issues" | "Business Rules";
 
 interface AppState {
+  activeView: AppView;
+  setActiveView: (view: AppView) => void;
   activeEntity: EntityType;
   clients: any[];
   workers: any[];
@@ -21,6 +24,8 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
+  activeView: "Clients",
+  setActiveView: (view) => set({ activeView: view }),
   activeEntity: "Clients",
   clients: [],
   workers: [],

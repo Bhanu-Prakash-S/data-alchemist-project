@@ -9,18 +9,20 @@ export default function Sidebar() {
   const {
     activeEntity,
     setActiveEntity,
+    activeView,
+    setActiveView,
     toggleValidationPanel,
     validationIssues,
   } = useAppStore();
   const menuItems: {
-    name: EntityType | "Validation Issues" | "Rules";
+    name: EntityType | "Validation Issues" | "Business Rules";
     badge?: number;
   }[] = [
     { name: "Clients" },
     { name: "Workers" },
     { name: "Tasks" },
     { name: "Validation Issues", badge: validationIssues.length },
-    { name: "Rules" },
+    { name: "Business Rules" },
   ];
 
   return (
@@ -28,12 +30,12 @@ export default function Sidebar() {
       {menuItems.map((item) => (
         <Button
           key={item.name}
-          variant={activeEntity === item.name ? "default" : "outline"}
+          variant={activeView === item.name ? "default" : "outline"}
           className="justify-between"
           onClick={() => {
             if (item.name === "Validation Issues")
               return toggleValidationPanel(true);
-            if (item.name === "Rules") return;
+            if (item.name === "Business Rules") return setActiveView(item.name);
             setActiveEntity(item.name as EntityType);
           }}
         >
