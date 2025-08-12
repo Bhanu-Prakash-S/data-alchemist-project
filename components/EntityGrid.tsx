@@ -78,8 +78,14 @@ export default function EntityGrid() {
   const onCellValueChanged = useCallback(
     (params: any) => {
       const updated = params.api.getRenderedNodes().map((n: any) => n.data);
+      const allData: any[] = [];
+      params.api.forEachNode((node: any) => {
+        if (node.data) {
+          allData.push(node.data);
+        }
+      });
       const entity = activeEntity;
-      updateStoreDebounced(entity, updated);
+      updateStoreDebounced(entity, allData);
     },
     [activeEntity, updateStoreDebounced]
   );

@@ -1,4 +1,5 @@
 // /lib/validationEngine.ts
+import { REQUIRED_COLUMNS, normalizeColumnName } from "@/lib/constants";
 import { parseJSONSafe, parseNumberList, parseStringList } from "./normalize";
 
 export type EntityType = "Clients" | "Workers" | "Tasks";
@@ -30,26 +31,11 @@ function mkIssue(overrides: Partial<ValidationIssue>): ValidationIssue {
   } as ValidationIssue;
 }
 
-/** Required columns per entity (from spec) */
-const requiredColumns: Record<EntityType, string[]> = {
-  Clients: ["ClientID", "ClientName", "PriorityLevel", "RequestedTaskIDs"],
-  Workers: [
-    "WorkerID",
-    "WorkerName",
-    "Skills",
-    "AvailableSlots",
-    "MaxLoadPerPhase",
-  ],
-  Tasks: ["TaskID", "TaskName", "Duration", "RequiredSkills"],
-};
-
-/** Helper: extract header names from rows (first object) */
 function getHeaders(rows: any[]) {
   if (!rows || !rows.length) return [];
   return Object.keys(rows[0]);
 }
 
-/** Validators below each accept data object and return ValidationIssue[] */
 export function validateRequiredColumns(data: {
   Clients: any[];
   Workers: any[];
@@ -58,17 +44,16 @@ export function validateRequiredColumns(data: {
   const issues: ValidationIssue[] = [];
   (["Clients", "Workers", "Tasks"] as EntityType[]).forEach((entity) => {
     const rows = data[entity];
-    const headers = getHeaders(rows);
-    requiredColumns[entity].forEach((col) => {
-      if (!headers.includes(col)) {
+    const headers = getHeaders(rows).map(normalizeColumnName);
+    REQUIRED_COLUMNS[entity].forEach((col) => {
+      if (!headers.includes(normalizeColumnName(col))) {
         issues.push(
           mkIssue({
             entity,
             type: "error",
             code: "MISSING_COLUMN",
             message: `Missing required column "${col}"`,
-            fixable: true,
-            payload: { missingColumn: col },
+            fixable: false,
           })
         );
       }
@@ -110,85 +95,13 @@ export function validateDuplicateIDs(data: {
               type: "error",
               code: "DUPLICATE_ID",
               message: `Duplicate ${idField} "${id}"`,
-              fixable: true,
-              payload: { idField, duplicateFor: id },
+              fixable: false,
             })
           )
         );
       }
     });
   });
-  return issues;
-}
-
-export function validateMalformedLists(data: {
-  Clients: any[];
-  Workers: any[];
-  Tasks: any[];
-}) {
-  const issues: ValidationIssue[] = [];
-
-  // Workers.AvailableSlots -> number list
-  (data.Workers || []).forEach((r: any, idx: number) => {
-    if (r.AvailableSlots == null || r.AvailableSlots === "") return;
-    const parsed = parseNumberList(r.AvailableSlots);
-    if (!parsed.ok) {
-      issues.push(
-        mkIssue({
-          entity: "Workers",
-          rowIndex: idx,
-          rowId: String(r.WorkerID ?? idx),
-          column: "AvailableSlots",
-          type: "error",
-          code: "MALFORMED_LIST",
-          message: `AvailableSlots value "${r.AvailableSlots}" is malformed`,
-          fixable: true,
-          payload: { suggested: [] },
-        })
-      );
-    }
-  });
-
-  // Clients.RequestedTaskIDs -> string list
-  (data.Clients || []).forEach((r: any, idx: number) => {
-    if (r.RequestedTaskIDs == null || r.RequestedTaskIDs === "") return;
-    const parsed = parseStringList(r.RequestedTaskIDs);
-    if (!parsed.ok) {
-      issues.push(
-        mkIssue({
-          entity: "Clients",
-          rowIndex: idx,
-          rowId: String(r.ClientID ?? idx),
-          column: "RequestedTaskIDs",
-          type: "error",
-          code: "MALFORMED_LIST",
-          message: `RequestedTaskIDs value "${r.RequestedTaskIDs}" is malformed`,
-          fixable: true,
-        })
-      );
-    }
-  });
-
-  // Tasks.RequiredSkills -> string list
-  (data.Tasks || []).forEach((r: any, idx: number) => {
-    if (r.RequiredSkills == null || r.RequiredSkills === "") return;
-    const parsed = parseStringList(r.RequiredSkills);
-    if (!parsed.ok) {
-      issues.push(
-        mkIssue({
-          entity: "Tasks",
-          rowIndex: idx,
-          rowId: String(r.TaskID ?? idx),
-          column: "RequiredSkills",
-          type: "error",
-          code: "MALFORMED_LIST",
-          message: `RequiredSkills value "${r.RequiredSkills}" is malformed`,
-          fixable: true,
-        })
-      );
-    }
-  });
-
   return issues;
 }
 
@@ -348,7 +261,7 @@ export function validateOverloadedWorkers(data: {
           column: "MaxLoadPerPhase",
           type: "warning",
           code: "OVERLOADED_WORKER",
-          message: `Worker claims MaxLoadPerPhase=${maxLoad} but has only ${slots.length} available slots`,
+          message: `Worker ${r.WorkerID} claims MaxLoadPerPhase=${maxLoad} but has only ${slots.length} available slots`,
           fixable: true,
           payload: { suggested: slots.length },
         })
@@ -377,7 +290,7 @@ export function validateSkillCoverage(data: {
     const missing = parsed.arr.filter(
       (s) => !workerSkills.has(String(s).toLowerCase())
     );
-    if (missing.length) {
+    if (missing.length > 0) {
       issues.push(
         mkIssue({
           entity: "Tasks",
@@ -397,6 +310,50 @@ export function validateSkillCoverage(data: {
   return issues;
 }
 
+export function validateNumericOnlyColumns(data: {
+  Clients: any[];
+  Workers: any[];
+  Tasks: any[];
+}) {
+  const issues: ValidationIssue[] = [];
+
+  const numericCols: Record<EntityType, string[]> = {
+    Clients: ["PriorityLevel"],
+    Workers: ["AvailableSlots", "MaxLoadPerPhase", "QualificationLevel"],
+    Tasks: ["Duration", "PreferredPhases", "MaxConcurrent"],
+  };
+
+  (["Clients", "Workers", "Tasks"] as EntityType[]).forEach((entity) => {
+    const rows = data[entity] || [];
+    numericCols[entity].forEach((col) => {
+      rows.forEach((r: any, idx: number) => {
+        const val = r[col];
+        if (val == null || val === "") return;
+
+        const parsed = parseNumberList(val);
+        if (!parsed.ok) {
+          issues.push(
+            mkIssue({
+              entity,
+              rowIndex: idx,
+              rowId: String(r[`${entity.slice(0, -1)}ID`] ?? idx),
+              column: col,
+              type: "error",
+              code: "INVALID_NUMERIC",
+              message: `${col} contains no numeric values`,
+              fixable: false,
+            })
+          );
+        } else {
+          r[col] = parsed.arr.join(", ");
+        }
+      });
+    });
+  });
+
+  return issues;
+}
+
 /** Main runner */
 export function runAllValidators(data: {
   Clients: any[];
@@ -406,11 +363,12 @@ export function runAllValidators(data: {
   let issues: ValidationIssue[] = [];
   issues = issues.concat(validateRequiredColumns(data));
   issues = issues.concat(validateDuplicateIDs(data));
-  issues = issues.concat(validateMalformedLists(data));
   issues = issues.concat(validateBrokenJSON(data));
   issues = issues.concat(validateOutOfRangeValues(data));
   issues = issues.concat(validateUnknownReferences(data));
   issues = issues.concat(validateOverloadedWorkers(data));
+  issues = issues.concat(validateNumericOnlyColumns(data));
   issues = issues.concat(validateSkillCoverage(data));
+
   return issues;
 }
