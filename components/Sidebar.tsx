@@ -30,13 +30,21 @@ export default function Sidebar() {
       {menuItems.map((item) => (
         <Button
           key={item.name}
+          // variant={activeEntity === item.name ? "default" : "outline"}
           variant={activeView === item.name ? "default" : "outline"}
           className="justify-between"
           onClick={() => {
-            if (item.name === "Validation Issues")
-              return toggleValidationPanel(true);
-            if (item.name === "Business Rules") return setActiveView(item.name);
+            if (item.name === "Validation Issues") {
+              toggleValidationPanel(true);
+              return;
+            }
+            if (item.name === "Business Rules") {
+              setActiveView(item.name);
+              return;
+            }
+            // For entity grids:
             setActiveEntity(item.name as EntityType);
+            setActiveView(item.name);
           }}
         >
           {item.name}
