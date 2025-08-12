@@ -1,9 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Sidebar from "../components/Sidebar";
-import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 
-ModuleRegistry.registerModules([AllCommunityModule]);
 export const metadata: Metadata = {
   title: "Data Alchemist",
   description: "Fullstack task",

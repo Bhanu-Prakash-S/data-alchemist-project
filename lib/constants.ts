@@ -1,3 +1,5 @@
+import { EntityType } from "./validationEngine";
+
 export const REQUIRED_COLUMNS = {
   Clients: [
     "ClientID",
@@ -31,3 +33,9 @@ export const REQUIRED_COLUMNS = {
 export function normalizeColumnName(name: string): string {
   return name.replace(/[\s_]+/g, "").toLowerCase();
 }
+
+export const ENTITY_ID_FIELDS: Record<EntityType, string> = {
+  Clients: "ClientID",
+  Workers: "WorkerID",
+  Tasks: "TaskID",
+};

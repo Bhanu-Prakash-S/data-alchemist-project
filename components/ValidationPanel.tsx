@@ -79,7 +79,7 @@ export default function ValidationPanel() {
 
         <div className="p-4 overflow-auto h-[calc(100%-88px)]">
           {validationIssues.length === 0 && (
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground py-2">
               No issues found.
             </div>
           )}
