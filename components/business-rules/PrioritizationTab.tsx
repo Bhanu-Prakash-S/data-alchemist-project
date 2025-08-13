@@ -3,7 +3,6 @@
 import React, { useMemo, useState } from "react";
 import { useRulesStore } from "@/store/useRulesStore";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -18,8 +17,6 @@ export default function PrioritizationTab() {
   const { priorities, setPriorities } = useRulesStore();
   const [selectedProfile, setSelectedProfile] = useState("");
 
-  // Example criteria pulled dynamically from known system fields
-  // These could be extended to be loaded from server/config file
   const criteriaList = useMemo(
     () => [
       "PriorityLevel",
@@ -76,7 +73,7 @@ export default function PrioritizationTab() {
     <div className="space-y-6">
       {/* Preset Profiles */}
       <div>
-        <Label>Preset Profiles</Label>
+        <Label className="p-2">Preset Profiles</Label>
         <Select value={selectedProfile} onValueChange={applyPreset}>
           <SelectTrigger>
             <SelectValue placeholder="Choose a preset..." />
@@ -97,7 +94,7 @@ export default function PrioritizationTab() {
           <div key={criteria}>
             <div className="flex justify-between mb-1">
               <Label>{criteria}</Label>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-slate-900">
                 {priorities[criteria] ?? 0}
               </span>
             </div>
@@ -106,7 +103,7 @@ export default function PrioritizationTab() {
               onValueChange={(val) => handleWeightChange(criteria, val[0])}
               min={0}
               max={100}
-              step={1}
+              step={5}
             />
           </div>
         ))}

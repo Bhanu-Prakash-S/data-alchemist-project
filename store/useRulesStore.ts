@@ -8,8 +8,7 @@ export type RuleType =
   | "slotRestriction"
   | "loadLimit"
   | "phaseWindow"
-  | "patternMatch"
-  | "precedenceOverride";
+  | "patternMatch";
 
 export interface Rule {
   id: string;

@@ -3,8 +3,7 @@ export type RuleType =
   | "slotRestriction"
   | "loadLimit"
   | "phaseWindow"
-  | "patternMatch"
-  | "precedenceOverride";
+  | "patternMatch";
 
 export interface BaseRule {
   id: string; // UUID
@@ -47,12 +46,6 @@ export interface PatternMatchRule extends BaseRule {
   regex: string; // JS-style regex pattern string
   templateId: string; // ID of predefined template
   params: Record<string, any>; // dynamic parameters
-}
-
-/** Override precedence of specific rules */
-export interface PrecedenceOverrideRule extends BaseRule {
-  type: "precedenceOverride";
-  order: string[]; // rule IDs in priority order
 }
 
 /** Weight/Priority settings */

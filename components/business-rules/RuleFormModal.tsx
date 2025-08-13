@@ -62,24 +62,6 @@ export default function RuleFormModal({
     [tasks]
   );
 
-  const clientOptions = useMemo(
-    () =>
-      (clients || []).map((c: any) => ({
-        label: String(c.ClientID ?? ""),
-        value: String(c.ClientID ?? ""),
-      })),
-    [clients]
-  );
-
-  const workerOptions = useMemo(
-    () =>
-      (workers || []).map((w: any) => ({
-        label: String(w.WorkerID ?? ""),
-        value: String(w.WorkerID ?? ""),
-      })),
-    [workers]
-  );
-
   const entityOptions: { label: EntityName; value: EntityName }[] = [
     { label: "Clients", value: "Clients" },
     { label: "Workers", value: "Workers" },
@@ -111,14 +93,6 @@ export default function RuleFormModal({
     const sorted = Array.from(set).sort((a, b) => a - b);
     return sorted.map((n) => ({ label: String(n), value: String(n) }));
   }, [tasks]);
-
-  // Precedence helper to ensure ordered items match current selection
-  const sanitizeOrder = (selectedIds: string[], currentOrder: string[]) => {
-    const inSet = new Set(selectedIds);
-    const ordered = currentOrder.filter((id) => inSet.has(id));
-    const missing = selectedIds.filter((id) => !currentOrder.includes(id));
-    return [...ordered, ...missing];
-  };
 
   // --------------------------
   // Hydrate on open / edit
@@ -229,12 +203,7 @@ export default function RuleFormModal({
         }
         return { ok: true };
       }
-      case "precedenceOverride": {
-        const order = config.ruleOrder || [];
-        if (!Array.isArray(order) || order.length === 0)
-          return { ok: false, message: "Provide an ordered list of rule IDs." };
-        return { ok: true };
-      }
+
       default:
         return { ok: true };
     }
@@ -314,10 +283,10 @@ export default function RuleFormModal({
       <div className="space-y-2">
         <Label>Worker Group</Label>
         <MultiSelect
-          options={workerOptions}
-          selected={(config.workerIds as string[]) || []}
-          onChange={(vals) => setConfig({ ...config, workerIds: vals })}
-          placeholder="Select workers..."
+          options={workerGroups}
+          selected={config.workerGroups || []}
+          onChange={(val) => setConfig({ ...config, workerGroups: val })}
+          placeholder="Select Worker Groups"
         />
       </div>
 
@@ -344,8 +313,8 @@ export default function RuleFormModal({
       <div className="space-y-2">
         <Label>Task</Label>
         <Select
-          value={config.taskId || ""}
-          onValueChange={(val) => setConfig({ ...config, taskId: val })}
+          value={config.task || ""}
+          onValueChange={(val) => setConfig({ ...config, task: val })}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select task" />
@@ -432,54 +401,6 @@ export default function RuleFormModal({
     </div>
   );
 
-  // precedenceOverride: { orderedTaskIds: string[]; label?: string }
-  const PrecedenceOverrideBlock = (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label>Label (optional)</Label>
-        <Input
-          value={config.label || ""}
-          onChange={(e) => setConfig({ ...config, label: e.target.value })}
-          placeholder="e.g., Global precedence"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label>Choose Tasks</Label>
-        <MultiSelect
-          options={taskOptions}
-          selected={(config.selectedTaskIds as string[]) || []}
-          onChange={(vals) => {
-            const newOrder = sanitizeOrder(
-              vals,
-              (config.orderedTaskIds as string[]) || []
-            );
-            setConfig({
-              ...config,
-              selectedTaskIds: vals,
-              orderedTaskIds: newOrder,
-            });
-          }}
-          placeholder="Select tasks to prioritize..."
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label>Order (drag to reorder)</Label>
-        <SortableList
-          items={
-            ((config.orderedTaskIds as string[]) || []).length
-              ? (config.orderedTaskIds as string[])
-              : (config.selectedTaskIds as string[]) || []
-          }
-          onChange={(newItems) =>
-            setConfig({ ...config, orderedTaskIds: newItems })
-          }
-        />
-      </div>
-    </div>
-  );
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-xl">
@@ -503,9 +424,6 @@ export default function RuleFormModal({
               <SelectItem value="loadLimit">Load Limit</SelectItem>
               <SelectItem value="phaseWindow">Phase Window</SelectItem>
               <SelectItem value="patternMatch">Pattern Match</SelectItem>
-              <SelectItem value="precedenceOverride">
-                Precedence Override
-              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -526,7 +444,6 @@ export default function RuleFormModal({
         {type === "loadLimit" && LoadLimitBlock}
         {type === "phaseWindow" && PhaseWindowBlock}
         {type === "patternMatch" && PatternMatchBlock}
-        {type === "precedenceOverride" && PrecedenceOverrideBlock}
 
         <div className="pt-2 flex justify-end gap-2">
           <Button variant="outline" onClick={onClose}>

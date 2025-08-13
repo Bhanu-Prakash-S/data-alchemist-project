@@ -7,13 +7,16 @@ import ExportFooter from "./business-rules/ExportFooter";
 
 export default function BusinessRulesPanel() {
   return (
-    <div className="flex flex-col h-full">
-      <Tabs defaultValue="rules" className="flex-1">
+    <div className="bg-zinc-200 flex flex-col h-full">
+      <Tabs defaultValue="rules" className="flex-1 p-4">
         <TabsList>
           <TabsTrigger value="rules">Rules</TabsTrigger>
           <TabsTrigger value="prioritization">Prioritization</TabsTrigger>
         </TabsList>
-        <TabsContent value="rules" className="p-4">
+        <TabsContent
+          value="rules"
+          className="p-4 border-2 border-slate-700 rounded-lg bg-zinc-100"
+        >
           <RulesTab />
         </TabsContent>
         <TabsContent value="prioritization" className="p-4">
