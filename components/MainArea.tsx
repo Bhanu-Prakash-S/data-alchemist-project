@@ -1,8 +1,6 @@
 "use client";
-import BusinessRulesPanel from "@/components/BusinessRulesPanel";
 import FileDropper from "@/components/FileDropper";
 import ValidationPanel from "@/components/ValidationPanel";
-import ResizablePanels from "@/components/ResizablePanels";
 import EntityWithValidation from "@/components/EntityWithValidation";
 import { useAppStore } from "@/store/useAppStore";
 import { useEffect } from "react";
@@ -33,7 +31,7 @@ export default function MainArea() {
     : [];
 
   return (
-    <div className="h-screen w-full bg-gray-50">
+    <div className="h-screen w-full bg-slate-200">
       {isEntityView && data.length ? (
         <EntityWithValidation entity={activeView} />
       ) : (

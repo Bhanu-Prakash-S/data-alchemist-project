@@ -1,18 +1,18 @@
 "use client";
 import React from "react";
 import { useAppStore } from "@/store/useAppStore";
-import { ValidationIssue, EntityType } from "@/lib/validationEngine";
+import { EntityType, ValidationIssue } from "@/lib/validationEngine";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
 export default function ValidationPanel() {
-  const validationIssues = useAppStore(
-    (state) => state.validationIssues
-  ) as ValidationIssue[];
   const runAllValidators = useAppStore((state) => state.runAllValidators);
   const applyQuickFix = useAppStore((state) => state.applyQuickFix);
   const setActiveView = useAppStore((state) => state.setActiveView);
+  const validationIssues = useAppStore(
+    (state) => state.validationIssues
+  ) as ValidationIssue[];
 
   // Group by entity
   const byEntity: Record<EntityType, ValidationIssue[]> =
@@ -36,32 +36,46 @@ export default function ValidationPanel() {
     }, 120);
   };
 
+  const getIssueStyles = (type: string) => {
+    switch (type) {
+      case "error":
+        return "border-red-500 bg-red-50";
+      case "warning":
+        return "border-amber-600 bg-amber-100";
+      default:
+        return "border-gray-500 bg-gray-200";
+    }
+  };
+
   return (
-    <div className="w-full h-full flex flex-col border-t border-l shadow-lg z-40">
+    <div className="w-full h-full flex flex-col shadow-lg z-40">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-50 rounded-t-lg">
+      <div className="flex items-center justify-between px-4 border-b bg-gray-50 rounded-t-lg">
         <div className="flex items-center space-x-2">
           <h3 className="text-sm font-medium">Validation Issues</h3>
           <Badge
             variant="secondary"
-            className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded"
+            className="bg-red-200 text-red-700 text-xs px-2 py-1 rounded-lg"
           >
             {validationIssues.length}
           </Badge>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button size="sm" variant="ghost" onClick={runAllValidators}>
+        <div className="flex items-center space-x-2 p-1">
+          <Button size="sm" variant="default" onClick={runAllValidators}>
             Re-run
           </Button>
         </div>
       </div>
 
-      <div className="flex h-full overflow-hidden">
+      <div className="flex h-full bg-gray-50 overflow-hidden">
         {/* Clients Section */}
         <div className="flex-1 flex flex-col border-gray-400">
-          <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-25">
+          <div className="flex items-center justify-between px-4 py-1 border-b bg-gray-25">
             <h4 className="text-sm font-medium">Clients</h4>
-            <Badge variant="outline" className="text-xs">
+            <Badge
+              variant="outline"
+              className="text-xs bg-red-200 text-red-700"
+            >
               {byEntity.Clients.length}
             </Badge>
           </div>
@@ -75,7 +89,9 @@ export default function ValidationPanel() {
                 {byEntity.Clients.map((issue: ValidationIssue) => (
                   <div
                     key={issue.id}
-                    className="p-2 border border-gray-200 rounded text-xs hover:shadow-sm cursor-pointer bg-white"
+                    className={`p-2 border-2 rounded text-xs hover:shadow-sm cursor-pointer ${getIssueStyles(
+                      issue.type
+                    )}`}
                     onClick={() => onClickIssue(issue)}
                   >
                     <div className="flex items-start justify-between">
@@ -117,9 +133,12 @@ export default function ValidationPanel() {
 
         {/* Workers Section */}
         <div className="flex-1 flex flex-col">
-          <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-25">
+          <div className="flex items-center justify-between px-4 py-1 border-b bg-gray-25">
             <h4 className="text-sm font-medium">Workers</h4>
-            <Badge variant="outline" className="text-xs">
+            <Badge
+              variant="outline"
+              className="text-xs bg-red-200 text-red-700"
+            >
               {byEntity.Workers.length}
             </Badge>
           </div>
@@ -133,7 +152,9 @@ export default function ValidationPanel() {
                 {byEntity.Workers.map((issue: ValidationIssue) => (
                   <div
                     key={issue.id}
-                    className="p-2 border rounded text-xs hover:shadow-sm cursor-pointer bg-white"
+                    className={`p-2 border-2 rounded text-xs hover:shadow-sm cursor-pointer ${getIssueStyles(
+                      issue.type
+                    )}`}
                     onClick={() => onClickIssue(issue)}
                   >
                     <div className="flex items-start justify-between">
@@ -175,9 +196,12 @@ export default function ValidationPanel() {
 
         {/* Tasks Section */}
         <div className="flex-1 flex flex-col">
-          <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-25">
+          <div className="flex items-center justify-between px-4 py-1 border-b bg-gray-25">
             <h4 className="text-sm font-medium">Tasks</h4>
-            <Badge variant="outline" className="text-xs">
+            <Badge
+              variant="outline"
+              className="text-xs bg-red-200 text-red-700"
+            >
               {byEntity.Tasks.length}
             </Badge>
           </div>

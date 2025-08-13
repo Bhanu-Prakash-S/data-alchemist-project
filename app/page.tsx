@@ -9,25 +9,11 @@ import MainArea from "@/components/MainArea";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Page() {
-  const { activeView, clients, workers, tasks, loadFromLocalStorage } =
-    useAppStore();
+  const { activeView, loadFromLocalStorage } = useAppStore();
 
   useEffect(() => {
     loadFromLocalStorage();
   }, [loadFromLocalStorage]);
-
-  const isEntityView =
-    activeView === "Clients" ||
-    activeView === "Workers" ||
-    activeView === "Tasks";
-
-  const data = isEntityView
-    ? activeView === "Clients"
-      ? clients
-      : activeView === "Workers"
-      ? workers
-      : tasks
-    : [];
 
   return (
     <div className=" w-full h-screen relative">

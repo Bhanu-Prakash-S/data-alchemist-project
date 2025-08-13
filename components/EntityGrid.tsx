@@ -8,7 +8,7 @@ import { debounce } from "lodash";
 import { navigateToIssue } from "./utils/gridNavigation";
 import { useColumnDefs } from "./utils/useColumnDefs";
 import {
-  themeQuartz,
+  themeBalham,
   GridReadyEvent,
   CellValueChangedEvent,
 } from "ag-grid-community";
@@ -73,7 +73,7 @@ export default function EntityGrid({
   return (
     <div className="w-full h-full">
       <AgGridReact
-        theme={themeQuartz}
+        theme={themeBalham}
         onGridReady={onGridReady}
         rowData={rowData}
         columnDefs={columnDefs as any}
@@ -88,7 +88,7 @@ export default function EntityGrid({
         animateRows={true}
       />
       <style>{`
-        .cell-error { background: rgba(255, 82, 82, 0.12) !important; }
+        .cell-error { background: rgba(255, 82, 82, 0.3) !important; }
       `}</style>
     </div>
   );

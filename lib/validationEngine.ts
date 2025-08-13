@@ -125,7 +125,7 @@ export function validateBrokenJSON(data: {
           type: "error",
           code: "BROKEN_JSON",
           message: `AttributesJSON is not valid JSON: ${parsed.error}`,
-          fixable: true,
+          fixable: false,
           payload: { raw: r.AttributesJSON },
         })
       );
