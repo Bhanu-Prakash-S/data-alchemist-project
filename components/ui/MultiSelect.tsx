@@ -1,6 +1,5 @@
 // components/ui/MultiSelect.tsx
 "use client";
-
 import * as React from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,7 +16,7 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 interface Option {
   label: string;
@@ -68,18 +67,20 @@ export function MultiSelect({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0 w-[250px]">
-        <Command>
+        <Command className="max-h-64">
           <CommandInput placeholder={searchPlaceholder} />
           <CommandEmpty>{emptyText}</CommandEmpty>
-          <ScrollArea className="h-48">
-            <CommandGroup>
-              {options.map((opt) => {
-                const isSelected = selected.includes(opt.value);
-                return (
-                  <CommandItem
-                    key={opt.value}
-                    onSelect={() => toggleValue(opt.value)}
-                  >
+          <CommandGroup
+            className="max-h-48 overflow-y-auto"
+            onWheel={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            {options.map((opt, index) => {
+              const isSelected = selected.includes(opt.value);
+              return (
+                <div key={opt.value}>
+                  <CommandItem onSelect={() => toggleValue(opt.value)}>
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
@@ -88,10 +89,10 @@ export function MultiSelect({
                     />
                     {opt.label}
                   </CommandItem>
-                );
-              })}
-            </CommandGroup>
-          </ScrollArea>
+                </div>
+              );
+            })}
+          </CommandGroup>
         </Command>
       </PopoverContent>
     </Popover>
