@@ -29,7 +29,6 @@ export const REQUIRED_COLUMNS = {
   ],
 };
 
-// Utility to normalize column names for comparison
 export function normalizeColumnName(name: string): string {
   return name.replace(/[\s_]+/g, "").toLowerCase();
 }

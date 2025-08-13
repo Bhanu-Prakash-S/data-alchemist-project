@@ -1,11 +1,6 @@
-// /lib/parseFile.ts
 import * as XLSX from "xlsx";
 import { EntityType } from "./validationEngine";
-import {
-  parseNumberList,
-  parseStringList,
-  parseJSONSafe,
-} from "@/lib/normalize";
+import { parseNumberList } from "@/lib/normalize";
 
 function normalizeEntities(entities: Record<EntityType, any[]>) {
   return {
@@ -60,7 +55,6 @@ export function parseExcel(file: File) {
         }
       });
 
-      // ✅ Normalize after parsing
       const normalized = normalizeEntities(entities);
       resolve(normalized);
     };

@@ -1,4 +1,3 @@
-// components/ui/MultiSelect.tsx
 "use client";
 import * as React from "react";
 import { Check, ChevronDown } from "lucide-react";
@@ -16,7 +15,6 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
 interface Option {
   label: string;

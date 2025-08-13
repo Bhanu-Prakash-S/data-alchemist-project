@@ -28,7 +28,7 @@ export default function EntityWithValidation({
         const newHeight = Math.max(
           15,
           Math.min(80, startHeight + deltaPercentage)
-        ); // Between 30% and 80%
+        );
         setEntityGridHeight(newHeight);
       };
 

@@ -1,4 +1,3 @@
-// /store/useAppStore.ts
 import { create } from "zustand";
 import { runAllValidators, ValidationIssue } from "@/lib/validationEngine";
 import { EntityType } from "@/lib/validationEngine";
@@ -11,15 +10,15 @@ export type AppView =
 
 interface AppState {
   activeView: AppView;
-  setActiveView: (view: AppView) => void;
   clients: any[];
   workers: any[];
   tasks: any[];
   validationIssues: ValidationIssue[];
   validationPanelOpen: boolean;
   entityGridHeight: number;
-  setEntityGridHeight: (val: number) => void;
 
+  setEntityGridHeight: (val: number) => void;
+  setActiveView: (view: AppView) => void;
   setData: (entity: EntityType, rows: any[]) => void;
   loadFromLocalStorage: () => void;
   runAllValidators: () => void;

@@ -1,4 +1,3 @@
-// components/ui/SortableListItem.tsx
 "use client";
 
 import React from "react";

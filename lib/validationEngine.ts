@@ -1,4 +1,3 @@
-// /lib/validationEngine.ts
 import { REQUIRED_COLUMNS, normalizeColumnName } from "@/lib/constants";
 import { parseJSONSafe, parseNumberList, parseStringList } from "./normalize";
 
@@ -16,7 +15,6 @@ export interface ValidationIssue {
   code: string;
   message: string;
   fixable?: boolean;
-  // optional payload for quick fix
   payload?: any;
 }
 
@@ -354,7 +352,6 @@ export function validateNumericOnlyColumns(data: {
   return issues;
 }
 
-/** Main runner */
 export function runAllValidators(data: {
   Clients: any[];
   Workers: any[];
