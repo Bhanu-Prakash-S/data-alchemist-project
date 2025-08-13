@@ -17,6 +17,8 @@ interface AppState {
   tasks: any[];
   validationIssues: ValidationIssue[];
   validationPanelOpen: boolean;
+  entityGridHeight: number;
+  setEntityGridHeight: (val: number) => void;
 
   setData: (entity: EntityType, rows: any[]) => void;
   loadFromLocalStorage: () => void;
@@ -27,6 +29,9 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
+  entityGridHeight: 60,
+  setEntityGridHeight: (val: number) => set({ entityGridHeight: val }),
+
   activeView: "Clients",
   setActiveView: (view) => set({ activeView: view }),
   clients: [],

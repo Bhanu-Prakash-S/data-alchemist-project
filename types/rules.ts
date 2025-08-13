@@ -55,15 +55,6 @@ export interface PrecedenceOverrideRule extends BaseRule {
   order: string[]; // rule IDs in priority order
 }
 
-// /** All rule types combined */
-// export type Rule =
-//   | CoRunRule
-//   | SlotRestrictionRule
-//   | LoadLimitRule
-//   | PhaseWindowRule
-//   | PatternMatchRule
-//   | PrecedenceOverrideRule;
-
 /** Weight/Priority settings */
 export interface WeightSettings {
   method: "sliders" | "ranking" | "presets";

@@ -1,12 +1,10 @@
 "use client";
 import BusinessRulesPanel from "@/components/BusinessRulesPanel";
-import EntityGrid from "@/components/EntityGrid";
-import FileDropper from "@/components/FileDropper";
-import ValidationPanel from "@/components/ValidationPanel";
 import { useAppStore } from "@/store/useAppStore";
 import { useEffect } from "react";
 
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import MainArea from "@/components/MainArea";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -32,15 +30,8 @@ export default function Page() {
     : [];
 
   return (
-    <div className="p-4 w-full h-screen relative">
-      {activeView === "Business Rules" ? (
-        <BusinessRulesPanel />
-      ) : isEntityView && data.length ? (
-        <EntityGrid entity={activeView} />
-      ) : (
-        activeView !== "Validation Issues" && <FileDropper />
-      )}
-      <ValidationPanel />
+    <div className=" w-full h-screen relative">
+      {activeView === "Business Rules" ? <BusinessRulesPanel /> : <MainArea />}
     </div>
   );
 }

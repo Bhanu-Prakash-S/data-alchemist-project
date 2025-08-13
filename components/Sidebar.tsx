@@ -6,16 +6,15 @@ import { useAppStore } from "../store/useAppStore";
 import type { EntityType } from "@/lib/validationEngine";
 
 export default function Sidebar() {
-  const { activeView, setActiveView, toggleValidationPanel, validationIssues } =
-    useAppStore();
+  const { activeView, setActiveView, validationIssues } = useAppStore();
+
   const menuItems: {
-    name: EntityType | "Validation Issues" | "Business Rules";
+    name: EntityType | "Business Rules";
     badge?: number;
   }[] = [
     { name: "Clients" },
     { name: "Workers" },
     { name: "Tasks" },
-    { name: "Validation Issues", badge: validationIssues.length },
     { name: "Business Rules" },
   ];
 
@@ -24,20 +23,9 @@ export default function Sidebar() {
       {menuItems.map((item) => (
         <Button
           key={item.name}
-          // variant={activeEntity === item.name ? "default" : "outline"}
           variant={activeView === item.name ? "default" : "outline"}
           className="justify-between"
           onClick={() => {
-            if (item.name === "Validation Issues") {
-              toggleValidationPanel(true);
-              return;
-            }
-            // if (item.name === "Business Rules") {
-            //   setActiveView(item.name);
-            //   return;
-            // }
-            // For entity grids:
-            // setActiveEntity(item.name as EntityType);
             setActiveView(item.name);
           }}
         >
