@@ -1,4 +1,4 @@
-# Data Alchemist – Business Rules & Prioritization Tool
+# Data Alchemist – Resource‑Allocation Configurator
 
 **Data Alchemist** is a web-based tool for managing, validating, and prioritizing operational entities such as **Clients**, **Workers**, and **Tasks**. It provides an intuitive interface to define **Business Rules**, set **Prioritization Weights**, and export clean, validated datasets for downstream use.
 
